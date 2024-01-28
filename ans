@@ -1,0 +1,111 @@
+Longest Common Subsequence
+
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+static int lcsUtil(String s1, String s2, int ind1, int ind2, int[][] dp) {
+        // Base case: If either of the strings reaches the end, return 0
+        if (ind1 < 0 || ind2 < 0)
+            return 0;
+
+        // If the result for this subproblem has already been calculated, return it
+        if (dp[ind1][ind2] != -1)
+            return dp[ind1][ind2];
+
+        // If the characters at the current indices are the same, increment the LCS length
+        if (s1.charAt(ind1) == s2.charAt(ind2))
+            return dp[ind1][ind2] = 1 + lcsUtil(s1, s2, ind1 - 1, ind2 - 1, dp);
+
+        // If the characters are different, choose the maximum LCS length by either
+        // skipping a character in s1 or skipping a character in s2
+        else
+            return dp[ind1][ind2] = Math.max(lcsUtil(s1, s2, ind1, ind2 - 1, dp),
+                    lcsUtil(s1, s2, ind1 - 1, ind2, dp));
+    }
+	public static int lcs(String s, String t) {
+		int n = s.length();
+        int m = t.length();
+
+        // Create a 2D array to store results of subproblems
+        // int dp[][] = new int[n][m];
+
+        // // Initialize the dp array with -1 to indicate that subproblems are not solved yet
+        // for(int row[] : dp){
+        //  Arrays.fill(row,-1);
+        //  }
+		// Call the recursive function to find the LCS length
+        // return lcsUtil(s, t, n - 1, m - 1, dp);
+		int dp[][] = new int[n+1][m+1];
+
+		for(int i =0 ; i<n ; i++){
+			dp[i][0]=0;
+		}
+		for(int j =0 ; j<n ; j++){
+			dp[0][j]=0;
+		}
+        
+		for(int i=1;i<=n;i++){
+			for(int j=1;j<=m;j++){
+        if (s.charAt(i-1) == t.charAt(j-1))
+             dp[i][j] = 1 + dp[i - 1][j - 1];
+
+        
+        else
+             dp[i][j] = Math.max(dp[i][j - 1],
+                    dp[i - 1][j]);
+			}
+		}
+       return dp[n][m];  
+    }
+
+}
+2.Edit Distance
+
+class Solution {
+    public int getMinDistance(int m,int n,String word1, String word2,int[][] dp){
+        if(m<0)return n+1;
+        if(n<0)return m+1;
+        if (dp[m][n] != -1) {
+            return dp[m][n];
+        }
+        if(word1.charAt(m)==word2.charAt(n)){
+            return dp[m][n]=getMinDistance(m-1,n-1,word1,word2,dp);
+        }else{
+        return dp[m][n]=1+Math.min(Math.min(getMinDistance(m-1,n,word1,word2,dp),getMinDistance(m,n-1,word1,word2,dp)),getMinDistance(m-1,n-1,word1,word2,dp));
+        }
+    }
+    public int minDistance(String word1, String word2) {
+        if (word1 == null || word2 == null) return -1;
+        if (word1.length() == 0) return word2.length();
+        if (word2.length() == 0) return word1.length();
+        int m = word1.length();
+        int n = word2.length();
+        // int[][] dp = new int[m][n];
+        // for (int i = 0; i < m; i++) {
+        //     for (int j = 0; j < n; j++) {
+        //         dp[i][j] = -1;
+        //     }
+        // }
+        // return getMinDistance(m-1,n-1,word1,word2,dp);
+        int[][] dp = new int[m+1][n+1];
+
+        for(int i=0;i<=m;i++){
+            dp[i][0]=i;
+        }
+
+        for(int j=0;j<=n;j++){
+            dp[0][j]=j;
+        }
+
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(word1.charAt(i)==word2.charAt(j)){
+                    dp[i+1][j+1]= dp[i][j];
+                }else{
+                    dp[i+1][j+1]=1+ Math.min(Math.min(dp[i+1][j], dp[i][j+1]), dp[i][j]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}
